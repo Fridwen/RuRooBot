@@ -1,0 +1,5 @@
+discord.py
+asyncio
+youtube_dl
+requests
+bs4
