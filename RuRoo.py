@@ -144,10 +144,10 @@ async def on_message(message):
                 tier = tier.replace("platinum", "플래티넘")
             if "diamond" in tier:
                 tier = tier.replace("diamond", "다이아몬드")
-            if "master" in tier:
-                tier = tier.replace("master", "마스터")
             if "grandmaster" in tier:
                 tier = tier.replace("grandmaster", "그랜드마스터")
+            if "master" in tier:
+                tier = tier.replace("master", "마스터")
             if "challenger" in tier:
                 tier = tier.replace("challenger", "챌린저")
             print(winlose)
