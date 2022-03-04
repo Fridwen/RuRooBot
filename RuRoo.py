@@ -1,7 +1,13 @@
-import discord, asyncio, os, random, re, youtube_dl, requests
+import discord, asyncio, os, random, re, youtube_dl, requests, time
 from random import choice
 from discord.ext import commands
 from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from discord import FFmpegPCMAudio
+from discord.utils import get
+from youtube_dl import YoutubeDL
+
 game = discord.Game("냥!")
 client = discord.Client(status=discord.Status.online, activity=game)
 headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36'}
@@ -66,9 +72,6 @@ async def on_message(message):
             embed.add_field(name = "**★ 주사위**", value = "- !주사위 (정수) - 1 부터 해당 정수의 범위로 랜덤한 값을 추출한다냥", inline = False)
             embed.add_field(name = "**★ 경기**", value = "- !경기 (이름) (이름) (이름) (이름)... - 짝수개의 값을 넣으면 랜덤하게 두 팀으로 나눠준다냥 ", inline = False)
             embed.add_field(name = "**★ 안녕**", value = "- !안녕 - 인사를 해준다냥", inline = False)
-            embed.add_field(name = "**★ 이리와**", value = "- !이리와 - 음성 채널에 들어온다냥", inline = False)
-            embed.add_field(name = "**★ 저리가**", value = "- !저리가 - 음성 채널에서 나간다냥", inline = False)
-            embed.add_field(name = "**★ 전적검색**", value = "- !전적검색 (이름) - (이름) 플레이어의 롤 전적을 검색해준다냥", inline = False)
             embed.set_author(name = "루루봇", icon_url = "https://cdn.discordapp.com/attachments/916751424686260276/916756875981238272/69e5983b355aff34.jpg")
             user_id ='686565060826366004'
             embed.add_field(name = "\n★ 문의", value = f"<@{user_id}>", inline = False)
@@ -80,14 +83,25 @@ async def on_message(message):
             embed.add_field(name = "**★ 주사위**", value = "- !주사위 (정수) - 1 부터 해당 정수의 범위로 랜덤한 값을 추출한다냥", inline = False)
             embed.add_field(name = "**★ 경기**", value = "- !경기 (이름) (이름) (이름) (이름)... - 짝수개의 값을 넣으면 랜덤하게 두 팀으로 나눠준다냥 ", inline = False)
             embed.add_field(name = "**★ 안녕**", value = "- !안녕 - 인사를 해준다냥", inline = False)
-            embed.add_field(name = "**★ 이리와**", value = "- !이리와 - 음성 채널에 들어온다냥", inline = False)
-            embed.add_field(name = "**★ 저리가**", value = "- !저리가 - 음성 채널에서 나간다냥", inline = False)
-            embed.add_field(name = "**★ 전적검색**", value = "- !전적검색 (이름) - (이름) 플레이어의 롤 전적을 검색해준다냥", inline = False)
             embed.set_author(name = "루루봇", icon_url = "https://cdn.discordapp.com/attachments/916751424686260276/916756875981238272/69e5983b355aff34.jpg")
             user_id ='686565060826366004'
             embed.add_field(name = "\n★ 문의", value = f"<@{user_id}>", inline = False)
             await channel.send(embed=embed)
     
+    if message.content.startswith("!URL재생 "):
+        url = message.content.replace("!URL재생 ", "")
+        YDL_OPTIONS = {'format': 'bestaudio','noplaylist':'True'}
+        FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
+
+        if not vc.is_playing():
+            with YoutubeDL(YDL_OPTIONS) as ydl:
+                info = ydl.extract_info(url, download=False)
+            URL = info['formats'][0]['url']
+            vc.play(FFmpegPCMAudio(URL, **FFMPEG_OPTIONS))
+            await message.channel.send(embed = discord.Embed(title= "노래 재생", description = "현재 " + url + "을(를) 재생하고 있다냥", color = 0x00ff00))
+        else:
+            await message.channel.send("노래가 이미 재생되고 있다냥")
+
     
     if message.content.startswith("!이리와"):
         user = message.author
@@ -119,7 +133,7 @@ async def on_message(message):
             embedstat = discord.Embed(title=user + "님의 전적 정보", description="", color=0x62c1cc)
             embedstat.set_thumbnail(url=img)
             embedstat.add_field(name="티어 정보", value="`" + "0 lp" + " | " + "Unranked" + "`", inline=False)
-            embedstat.set_footer(text="솔로랭크 > 자유랭크 > 언랭의 우선도로 전적이 출력된다냥")
+            embedstat.set_footer(text="솔로랭크 > 자유랭크 > 언랭의 우선도로 전적이 출력됩니다.")
             await message.channel.send(embed=embedstat)
         else:
             img = "https://ww.namu.la/s/452135c0507972ac84a1280a7830b665310aa8897090d235be7017e96a666979de058d542893689518a700f8631b368c86467ce37b7d9235e24e61de3e67704c9ede04b4174b9edec93590008ae22984"
@@ -144,19 +158,18 @@ async def on_message(message):
                 tier = tier.replace("platinum", "플래티넘")
             if "diamond" in tier:
                 tier = tier.replace("diamond", "다이아몬드")
-            if "grandmaster" in tier:
-                tier = tier.replace("grandmaster", "그랜드마스터")
             if "master" in tier:
                 tier = tier.replace("master", "마스터")
+            if "grandmaster" in tier:
+                tier = tier.replace("grandmaster", "그랜드마스터")
             if "challenger" in tier:
                 tier = tier.replace("challenger", "챌린저")
             print(winlose)
-            embedstat = discord.Embed(title=user + "님의 전적 정보다냥", description="", color=0x62c1cc)
+            embedstat = discord.Embed(title=user + "님의 전적 정보", description="", color=0x62c1cc)
             embedstat.set_thumbnail(url=img)
             embedstat.add_field(name="티어 정보", value="`" + lp + " | " + tier + "`", inline=False)
             embedstat.add_field(name="승률", value="`" + winlose + "`", inline=False)
-            embedstat.set_footer(text="솔로랭크 > 자유랭크 > 언랭의 우선도로 전적이 출력된다냥")
+            embedstat.set_footer(text="솔로랭크 > 자유랭크 > 언랭의 우선도로 전적이 출력됩니다.")
             await message.channel.send(embed=embedstat)
-
-
+    
 client.run(TOKEN)
