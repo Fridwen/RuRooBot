@@ -125,7 +125,7 @@ async def on_message(message):
             with YoutubeDL(YDL_OPTIONS) as ydl:
                 info = ydl.extract_info(url, download=False)
             URL = info['formats'][0]['url']
-            gk.play(FFmpegPCMAudio(executable="C:/Users/solwi\Desktop/ffmpeg-5.0-essentials_build/bin/ffmpeg.exe", source=URL, **FFMPEG_OPTIONS))
+            gk.play(FFmpegPCMAudio(URL, **FFMPEG_OPTIONS))
             await message.channel.send(embed = discord.Embed(title= "노래 재생", description = "현재 " + url + "을(를) 재생하고 있다냥", color = 0x00ff00))
         else:
             await message.channel.send("노래가 이미 재생되고 있다냥")
