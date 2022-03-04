@@ -89,7 +89,9 @@ async def on_message(message):
             await channel.send(embed=embed)
     
     if message.content.startswith("!URL재생 "):
-        vc = user.voice.channel
+        user = message.author
+        vce = user.voice.channel
+        vc = await vce.connect()
         url = message.content.replace("!URL재생 ", "")
         YDL_OPTIONS = {'format': 'bestaudio','noplaylist':'True'}
         FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
@@ -108,7 +110,7 @@ async def on_message(message):
         user = message.author
         vc = user.voice.channel
         bot = client.get_user('916623193010229278')
-        voice= discord.utils.get(client.voice_clients, guild=message.guild)
+        voice = discord.utils.get(client.voice_clients, guild=message.guild)
         if voice == None:
             await vc.connect()
             await message.channel.send("음성 채널에 들어왔다냥")
@@ -141,7 +143,6 @@ async def on_message(message):
             tier = tier.get_text()
             lp = lp.get_text()
             winlose = winlose.get_text()
-            # lgname = lgname.get_text()
             print(tier)
             print(lp)
             winlose = winlose.replace("Win Rate", "승률")
