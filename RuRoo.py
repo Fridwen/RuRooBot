@@ -11,7 +11,8 @@ from youtube_dl import YoutubeDL
 game = discord.Game("냥!")
 client = discord.Client(status=discord.Status.online, activity=game)
 headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36'}
-TOKEN = os.environ.get('BOT_TOKEN')
+# TOKEN = os.environ.get('BOT_TOKEN')
+TOKEN = "OTE2NjIzMTkzMDEwMjI5Mjc4.Yas13w.jjikCQut03M48K179YJmWD7XKYw"
 @client.event
 async def on_message(message):
     if message.content == "!안녕":
@@ -91,16 +92,18 @@ async def on_message(message):
     if message.content.startswith("!URL재생 "):
         user = message.author
         vce = user.voice.channel
-        vc = await vce.connect()
+        # bot = client.get_user('916623193010229278')
+        # vc = await vce.connect()
+        gk = get(client.voice_clients, guild=message.guild)
         url = message.content.replace("!URL재생 ", "")
         YDL_OPTIONS = {'format': 'bestaudio','noplaylist':'True'}
         FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
 
-        if not vc.is_playing():
+        if not gk.is_playing():
             with YoutubeDL(YDL_OPTIONS) as ydl:
                 info = ydl.extract_info(url, download=False)
             URL = info['formats'][0]['url']
-            vc.play(FFmpegPCMAudio(URL, **FFMPEG_OPTIONS))
+            gk.play(FFmpegPCMAudio(executable="C:/Users/solwi\Desktop/ffmpeg-5.0-essentials_build/bin/ffmpeg.exe", source=URL, **FFMPEG_OPTIONS))
             await message.channel.send(embed = discord.Embed(title= "노래 재생", description = "현재 " + url + "을(를) 재생하고 있다냥", color = 0x00ff00))
         else:
             await message.channel.send("노래가 이미 재생되고 있다냥")
