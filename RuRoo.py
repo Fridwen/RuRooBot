@@ -89,6 +89,7 @@ async def on_message(message):
             await channel.send(embed=embed)
     
     if message.content.startswith("!URL재생 "):
+        vc = user.voice.channel
         url = message.content.replace("!URL재생 ", "")
         YDL_OPTIONS = {'format': 'bestaudio','noplaylist':'True'}
         FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
