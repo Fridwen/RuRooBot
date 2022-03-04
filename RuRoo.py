@@ -11,8 +11,8 @@ from youtube_dl import YoutubeDL
 game = discord.Game("냥!")
 client = discord.Client(status=discord.Status.online, activity=game)
 headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36'}
-# TOKEN = os.environ.get('BOT_TOKEN')
-TOKEN = "OTE2NjIzMTkzMDEwMjI5Mjc4.Yas13w.jjikCQut03M48K179YJmWD7XKYw"
+TOKEN = os.environ.get('BOT_TOKEN')
+
 @client.event
 async def on_message(message):
     if message.content == "!안녕":
