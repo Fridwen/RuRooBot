@@ -67,7 +67,7 @@ async def on_message(message):
         embed.add_field(name="B조", value=teamB, inline=True)
         await message.channel.send(embed=embed)
     
-     if message.content == "!명령어":
+    if message.content == "!명령어":
         if message.author.dm_channel:
             embed = discord.Embed(title = "[루루봇 명령어]", color = discord.Color.dark_blue())
             embed.add_field(name = "**★ 주사위**", value = "- !주사위 (정수) - 1 부터 해당 정수의 범위로 랜덤한 값을 추출한다냥", inline = False)
@@ -130,7 +130,6 @@ async def on_message(message):
             await message.channel.send(embed = discord.Embed(title= "노래 재생", description = "현재 " + url + "을(를) 재생하고 있다냥", color = 0x00ff00))
         else:
             await message.channel.send("노래가 이미 재생되고 있다냥")
-
 
     if message.content.startswith("!전적검색 "):
         user = message.content.replace("!전적검색 ", "")
